@@ -83,15 +83,53 @@ def gerar_codigo_pulseira():
     return ''.join(random.choice('0123456789ABCDEF') for _ in range(6))
 
 def cadastrar_vacinas():
-    vacinas_obrigatorias = ["Hepatite B", "BCG", "Tríplice Viral"]
-
     vacinas_recentes = []
-    for vacina_obrigatoria in vacinas_obrigatorias:
-        print(f"Você recebeu a vacina {vacina_obrigatoria} recentemente? (s/n): ")
-        resposta = input().lower()
 
+    print("Cadastro de Vacinas")
+    
+    while True:
+        # Solicitação do nome da vacina
+        nome_vacina = input("Digite o nome da vacina: ")
+
+        # Solicitação da data da vacina
+        while True:
+            data_vacina = input("Digite a data da vacina (ddmmaaaa): ")
+            if validar_data_nascimento(data_vacina):
+                break
+            else:
+                print("Formato de data inválido. Digite novamente.")
+
+        # Solicitação da descrição da vacina
+        descricao_vacina = input("Digite uma descrição da vacina: ")
+
+        # Solicitação do local da vacinação
+        local_vacinacao = input("Digite o local da vacinação: ")
+
+        vacina = {
+            "nome": nome_vacina,
+            "data": data_vacina,
+            "descricao": descricao_vacina,
+            "local": local_vacinacao
+        }
+
+        vacinas_recentes.append(vacina)
+
+        print(f"Vacina '{nome_vacina}' cadastrada com sucesso!")
+        
+        resposta = input("Deseja cadastrar outra vacina? (s/n) ")
+         
         if resposta == "s":
-            vacinas_recentes.append(vacina_obrigatoria)
+            return
+        elif resposta == "n":
+            break
+        else:
+            print("Por favor, digite uma opção válida...\n")
+            resposta = input("Deseja cadastrar outra vacina? (s/n) ")
+
+    # Verifica se foram cadastradas pelo menos duas vacinas
+    if len(vacinas_recentes) < 2:
+        print("É obrigatório cadastrar pelo menos duas vacinas.")
+        return cadastrar_vacinas()
 
     # Retorna um dicionário com título e descrição genérica
     return {"titulo": "Vacinas Recentes", "descricao": "Lista de vacinas recentes:", "vacinas": vacinas_recentes}
@@ -170,6 +208,7 @@ def cadastrar_tutor(usuarios):
     # Chame a função para cadastrar as pulseiras
     pulseiras = cadastrar_pulseira(nome_tutor, email_tutor, telefone_tutor, rua_tutor, numero_tutor, cep_tutor, bairro_tutor, cidade_tutor, estado_tutor, informacoes_adicionais_tutor)
     
+        # Solicitando e validando a senha do usuário
     senha = obter_senha_valida()
 
     # Adicione a senha ao usuário
@@ -390,16 +429,6 @@ def cadastrar_pulseira_individual(nome_tutor, email_tutor, telefone_tutor, rua_t
     print(f"{resultado_vacinas['titulo']}\n{resultado_vacinas['descricao']}")
     for vacina in resultado_vacinas['vacinas']:
         print(vacina)
-
-     # Solicitando e validando a senha do usuário
-    while True:
-        senha = input("Digite uma senha (com pelo menos um número e um caractere especial): ")
-        confirmacao_senha = input("Digite novamente a senha para confirmar: ")
-
-        if senha == confirmacao_senha and any(c.isdigit() for c in senha) and any(c in "!@#$%^&*()-_+=<>,.?/:;|[]{}`~" for c in senha):
-            break
-        else:
-            print("Senha inválida. Certifique-se de que ela contenha pelo menos um número e um caractere especial, e que as duas inserções sejam iguais.")
 
     # Copie as informações do tutor para o usuário
     usuario = {
