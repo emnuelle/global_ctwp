@@ -281,14 +281,6 @@ def cadastrar_pulseira_individual(nome_tutor, email_tutor, telefone_tutor, rua_t
         else:
             print("É necessário inserir pelo menos uma condição médica.")
 
-    # Verifica se a pessoa toma algum medicamento
-    print("A pessoa toma algum medicamento? (s/n): ")
-    resposta_medicamento = input().lower()
-
-    medicamentos_pulseira = []
-    if resposta_medicamento == "s":
-        medicamentos_pulseira = cadastrar_medicamentos()
-
     while True:
         print("Deseja adicionar mais uma condição médica? (s/n): ")
         opcao = input().lower()
@@ -301,6 +293,14 @@ def cadastrar_pulseira_individual(nome_tutor, email_tutor, telefone_tutor, rua_t
             break
         else:
             print("Opção inválida. Por favor, escolha 's' para sim ou 'n' para não.")
+            
+    # Verifica se a pessoa toma algum medicamento
+    print("A pessoa toma algum medicamento? (s/n): ")
+    resposta_medicamento = input().lower()
+
+    medicamentos_pulseira = []
+    if resposta_medicamento == "s":
+        medicamentos_pulseira = cadastrar_medicamentos()
 
     # Armazenando as ocorrências médicas do usuário
     ocorrencias_medicas = []
@@ -463,7 +463,7 @@ def login(usuarios):
                 print("\nNúmero máximo de tentativas excedido. Redirecionando para o menu inicial.")
                 break
 
-            print(f"Você tem mais {3 - tentativas} tentativas restantes.")
+            print(f"Você tem mais {3 - tentativas} tentativas restantes. Assim que forem ultrapassadas os sistema irá retornar ao menu inicial.")
 
 if __name__ == "__main__":
     menu_inicial()
