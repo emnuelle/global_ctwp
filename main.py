@@ -498,22 +498,32 @@ def login(usuarios):
             print(f"Você tem mais {3 - tentativas} tentativas restantes. Assim que forem ultrapassadas os sistema irá retornar ao menu inicial.")
             
 def consultar_pulseira(usuarios):
-    print("\nConsulta de Pulseira")
-    print()
+    while True:
+        print("\nConsulta de Pulseira")
+        print("\nDigite o código da pulseira ou 'b' para voltar ao Menu Inicial: ")
+        
+        codigo_pulseira = input().upper()
 
-    codigo_pulseira = input("Digite o código da pulseira: ").upper()
+        if codigo_pulseira == 'B':
+            break  # Sair da função e voltar ao menu inicial
 
-    # Search for the pulseira with the given code
-    pulseira_encontrada = None
-    for pulseira in usuarios:
-        if 'codigo' in pulseira and pulseira['codigo'] == codigo_pulseira:
-            pulseira_encontrada = pulseira
-            break
+        pulseira_encontrada = None
+        for pulseira in usuarios:
+            if 'codigo' in pulseira and pulseira['codigo'] == codigo_pulseira:
+                pulseira_encontrada = pulseira
+                break
 
-    if pulseira_encontrada:
-        exibir_informacoes_pulseira(pulseira_encontrada)
-    else:
-        print("Pulseira não encontrada. Verifique o código e tente novamente.")
+        if pulseira_encontrada:
+            exibir_informacoes_pulseira(pulseira_encontrada)
+        else:
+            print("Pulseira não encontrada. Verifique o código e tente novamente.")
+
+        print("\nDeseja consultar outra pulseira? (s/n): ")
+        opcao_continuar = input().lower()
+
+        if opcao_continuar != 's':
+            break  # Sair da função e voltar ao menu inicial
+
 
 def exibir_informacoes_pulseira(pulseira):
     print("\nInformações da Pulseira")
