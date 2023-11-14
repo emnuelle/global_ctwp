@@ -96,6 +96,31 @@ def cadastrar_vacinas():
     # Retorna um dicionário com título e descrição genérica
     return {"titulo": "Vacinas Recentes", "descricao": "Lista de vacinas recentes:", "vacinas": vacinas_recentes}
 
+def cadastrar_medicamentos():
+    medicamentos = []
+
+    while True:
+        print("Digite o nome do medicamento (ou 'n' para encerrar): ")
+        nome_medicamento = input()
+
+        if nome_medicamento.lower() == 'n':
+            break
+
+        tipo_medicamento = input("Digite o tipo do medicamento: ")
+        quantidade_medicamento = input("Digite a quantidade do medicamento: ")
+        tempo_medicamento = input("Digite o tempo de consumo do medicamento: ")
+
+        medicamento = {
+            "Nome": nome_medicamento,
+            "Tipo": tipo_medicamento,
+            "Quantidade": quantidade_medicamento,
+            "Tempo": tempo_medicamento
+        }
+
+        medicamentos.append(medicamento)
+
+    return medicamentos
+
 def cadastrar_tutor(usuarios):
     print("Cadastro de Tutor")
     print()
@@ -144,8 +169,10 @@ def cadastrar_tutor(usuarios):
 
     # Chame a função para cadastrar as pulseiras
     pulseiras = cadastrar_pulseira(nome_tutor, email_tutor, telefone_tutor, rua_tutor, numero_tutor, cep_tutor, bairro_tutor, cidade_tutor, estado_tutor, informacoes_adicionais_tutor)
+    
+    senha = obter_senha_valida()
 
-    # Adicione as pulseiras ao usuário
+    # Adicione a senha ao usuário
     usuario = {
         "nome_tutor": nome_tutor,
         "email_tutor": email_tutor,
@@ -157,13 +184,13 @@ def cadastrar_tutor(usuarios):
         "cidade_tutor": cidade_tutor,
         "estado_tutor": estado_tutor,
         "informacoes_adicionais_tutor": informacoes_adicionais_tutor,
-        "senha": senha,  # Adicione a senha do usuário
-        "pulseiras": pulseiras  # Adicione as pulseiras ao usuário
+        "senha": senha  # Adicione a senha do usuário
     }
 
     usuarios.append(usuario)
 
     print("Cadastro realizado com sucesso! Redirecionando para o menu inicial...")
+
 
 # Função para validar e obter uma senha do usuário
 def obter_senha_valida():
@@ -211,6 +238,7 @@ def cadastrar_pulseira(nome_tutor, email_tutor, telefone_tutor, rua_tutor, numer
 
 # Função atualizada para incluir as informações do tutor no usuário associado à pulseira
 def cadastrar_pulseira_individual(nome_tutor, email_tutor, telefone_tutor, rua_tutor, numero_tutor, cep_tutor, bairro_tutor, cidade_tutor, estado_tutor, informacoes_adicionais_tutor):
+    
     codigo_pulseira = gerar_codigo_pulseira()
 
     print(f"\nCadastrando pulseira com o id: {codigo_pulseira}")
@@ -252,6 +280,14 @@ def cadastrar_pulseira_individual(nome_tutor, email_tutor, telefone_tutor, rua_t
             break
         else:
             print("É necessário inserir pelo menos uma condição médica.")
+
+    # Verifica se a pessoa toma algum medicamento
+    print("A pessoa toma algum medicamento? (s/n): ")
+    resposta_medicamento = input().lower()
+
+    medicamentos_pulseira = []
+    if resposta_medicamento == "s":
+        medicamentos_pulseira = cadastrar_medicamentos()
 
     while True:
         print("Deseja adicionar mais uma condição médica? (s/n): ")
@@ -389,11 +425,12 @@ def cadastrar_pulseira_individual(nome_tutor, email_tutor, telefone_tutor, rua_t
         "ocorrencias_medicas": ocorrencias_medicas,
         "alergias": alergias,
         "vacinas_recentes": resultado_vacinas,
+        "medicamentos": medicamentos_pulseira,  # Adiciona os medicamentos à pulseira
         "usuario": usuario
     }
 
     print("Cadastro realizado com sucesso! Redirecionando para o menu inicial...")
-    
+
     # Agora, chame a função menu_inicial para voltar ao menu inicial
     menu_inicial()
 
