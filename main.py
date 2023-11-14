@@ -1,33 +1,53 @@
 import random
 import re
+import json
+
 
 # Função do menu inicial
 def menu_inicial():
-    while True:
-        print()
-        print("Health Tag")
-        print()
+    usuarios = []  # Mantenha uma lista de usuários cadastrados
 
-        print("Digite uma opção:")
-        print()
-        print("(1) Entrar")
+    while True:
+        print("\nHealth Tag")
+        print("\nDigite uma opção:")
+        print("(1) Login")
         print("(2) Cadastrar-se como Tutor")
         print("(3) Consultar")
-        print()
+        print("(4) Sair")
 
         escolha = int(input("Escolha uma opção: "))
 
+        usuarios = carregar_usuarios()               
+
         if escolha == 1:
-            login()
-            print("1")
+            login(usuarios)
         elif escolha == 2:
-            cadastrar_tutor()
+            usuarios = cadastrar_tutor(usuarios)
         elif escolha == 3:
-            # Função de consulta
-            print("3")
+            print("Opção de consulta")
+        elif escolha == 4:
+            print("Saindo do sistema. Até logo!")
+            break
         else:
             print("Por favor, escolha uma opção válida...")
-            continue 
+
+def carregar_usuarios():
+    try:
+        with open("usuarios.json", "r") as file:
+            data = file.read()
+            if data:
+                return json.loads(data)
+            else:
+                return []
+    except FileNotFoundError:
+        return []
+    except json.decoder.JSONDecodeError:
+        return []
+
+
+def salvar_usuarios(usuarios):
+    with open("usuarios.json", "w") as file:
+        json.dump(usuarios, file)
 
 def validar_data_nascimento(data):
     # Regex para o formato ddmmaaaa
@@ -76,7 +96,7 @@ def cadastrar_vacinas():
     # Retorna um dicionário com título e descrição genérica
     return {"titulo": "Vacinas Recentes", "descricao": "Lista de vacinas recentes:", "vacinas": vacinas_recentes}
 
-def cadastrar_tutor():
+def cadastrar_tutor(usuarios):
     print("Cadastro de Tutor")
     print()
 
@@ -119,8 +139,43 @@ def cadastrar_tutor():
     print("Informações Adicionais: ")
     informacoes_adicionais_tutor = input()
 
+    # Solicitando e validando a senha do usuário
+    senha = obter_senha_valida()
+
     # Chame a função para cadastrar as pulseiras
     pulseiras = cadastrar_pulseira(nome_tutor, email_tutor, telefone_tutor, rua_tutor, numero_tutor, cep_tutor, bairro_tutor, cidade_tutor, estado_tutor, informacoes_adicionais_tutor)
+
+    # Adicione as pulseiras ao usuário
+    usuario = {
+        "nome_tutor": nome_tutor,
+        "email_tutor": email_tutor,
+        "telefone_tutor": telefone_tutor,
+        "rua_tutor": rua_tutor,
+        "numero_tutor": numero_tutor,
+        "cep_tutor": cep_tutor,
+        "bairro_tutor": bairro_tutor,
+        "cidade_tutor": cidade_tutor,
+        "estado_tutor": estado_tutor,
+        "informacoes_adicionais_tutor": informacoes_adicionais_tutor,
+        "senha": senha,  # Adicione a senha do usuário
+        "pulseiras": pulseiras  # Adicione as pulseiras ao usuário
+    }
+
+    usuarios.append(usuario)
+
+    print("Cadastro realizado com sucesso! Redirecionando para o menu inicial...")
+
+# Função para validar e obter uma senha do usuário
+def obter_senha_valida():
+    while True:
+        senha = input("Digite uma senha (com pelo menos um número e um caractere especial): ")
+        confirmacao_senha = input("Digite novamente a senha para confirmar: ")
+
+        if senha == confirmacao_senha and any(c.isdigit() for c in senha) and any(c in "!@#$%^&*()-_+=<>,.?/:;|[]{}`~" for c in senha):
+            return senha
+        else:
+            print("Senha inválida. Certifique-se de que ela contenha pelo menos um número e um caractere especial, e que as duas inserções sejam iguais.")
+
 
 def cadastrar_pulseira(nome_tutor, email_tutor, telefone_tutor, rua_tutor, numero_tutor, cep_tutor, bairro_tutor, cidade_tutor, estado_tutor, informacoes_adicionais_tutor):
     pulseiras = []
@@ -346,7 +401,9 @@ def login(usuarios):
     print("\nLogin")
     print()
 
-    while True:
+    tentativas = 0
+
+    while tentativas < 3:
         email = input("Digite seu e-mail: ")
         senha = input("Digite sua senha: ")
 
@@ -362,8 +419,14 @@ def login(usuarios):
             # Aqui você pode adicionar as ações que deseja após o login, por exemplo, exibir um menu específico.
             break
         else:
+            tentativas += 1
             print("\nE-mail ou senha incorretos. Tente novamente.")
 
+            if tentativas == 3:
+                print("\nNúmero máximo de tentativas excedido. Redirecionando para o menu inicial.")
+                break
 
-# Exemplo de uso
-menu_inicial()
+            print(f"Você tem mais {3 - tentativas} tentativas restantes.")
+
+if __name__ == "__main__":
+    menu_inicial()
