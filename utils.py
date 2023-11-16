@@ -8,6 +8,10 @@ def validar_data_nascimento(data):
     return bool(padrao.match(data))
 
 
+def salvar_dados_json(dados, nome_arquivo='dados.json'):
+    with open(nome_arquivo, 'w', encoding='utf-8') as arquivo:
+        json.dump(dados, arquivo, ensure_ascii=False, indent=4)
+
 def validar_data_ocorrencia(data):
     # Regex para o formato ddmmaaaa
     padrao = re.compile(r"^(0[1-9]|[12][0-9]|3[01])(0[1-9]|1[0-2])\d{4}$")

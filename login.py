@@ -1,5 +1,8 @@
-import json
 from utils import salvar_dados_json
+from cadastro import cadastrar_medicamento, cadastrar_vacinas
+from utils import validar_data_ocorrencia
+
+
 # Função para fazer o login
 def login(usuarios):
     print("\nLogin")
@@ -42,8 +45,7 @@ def menu_secundario(user_data):
         escolha = input("Escolha uma opção: ")
 
         if escolha == '1':
-          # adicionar_informacoes(user_data)
-            print(1)
+            adicionar_informacoes(user_data)
         elif escolha == '2':
             exibir_menu_alteracao(user_data)
         elif escolha == '3':
@@ -189,12 +191,220 @@ def alterar_info_pulseira(user_data):
     print("Informações da pulseira alteradas com sucesso.")
 
 
+def alterar_alergias(pulseira_data):
+    alergias = pulseira_data["dados"]["alergias"]
+
+    print("\nMenu de Alteração de Alergias:")
+    print("1. Adicionar alergia")
+    print("2. Sair")
+
+    escolha = input("Escolha a opção desejada: ")
+
+    if escolha == "1":
+        alergia = input("Digite a alergia: ")
+        especificacao = input("Digite a especificação (ou deixe em branco): ")
+
+        nova_alergia = {
+            "Alergia:": alergia,
+            "Especificacao": especificacao
+        }
+
+        alergias.append(nova_alergia)
+        print("Alergia adicionada com sucesso.")
+    elif escolha == "2":
+        print("Saindo do menu de alteração de alergias.")
+    else:
+        print("Opção inválida. Tente novamente.")
 
 
+def alterar_vacinas(pulseira_data):
+    vacinas = pulseira_data["dados"]["vacinas"]
+
+    while True:
+        print("\nMenu de Alteração de Vacinas:")
+        print("1. Adicionar vacina")
+        print("2. Sair")
+
+        escolha = input("Escolha a opção desejada: ")
+
+        if escolha == "1":
+            nome_vacina = input("Nome da vacina: ")
+            data_vacina = input("Data da aplicação: ")
+            descricao_vacina = input("Descrição: ")
+            local_vacinacao = input("Local da aplicação: ")
+
+            nova_vacina = {
+                "nome": nome_vacina,
+                "data": data_vacina,
+                "descricao": descricao_vacina,
+                "local": local_vacinacao
+            }
+
+            vacinas.append(nova_vacina)
+            print("Vacina adicionada com sucesso.")
+        elif escolha == "2":
+            print("Saindo do menu de alteração de vacinas.")
+            break
+        else:
+            print("Opção inválida. Tente novamente.")
 
 
+def alterar_ocorrencias_medicas(pulseira_data):
+    ocorrencias_medicas = pulseira_data["ocorrencias_medicas"]
+
+    while True:
+        print("\nMenu de Alteração de Ocorrências Médicas:")
+        print("1. Adicionar ocorrência médica")
+        print("2. Sair")
+
+        escolha = input("Escolha a opção desejada: ")
+
+        if escolha == "1":
+            data_ocorrencia = input("Data da ocorrência (ddmmaaaa): ")
+            local_ocorrencia = input("Local da ocorrência: ")
+            relato_ocorrencia = input("Relato da ocorrência: ")
+            sintomas_ocorrencia = input("Sintomas da ocorrência: ")
+
+            nova_ocorrencia = {
+                "Data": data_ocorrencia,
+                "Local": local_ocorrencia,
+                "Relato": relato_ocorrencia,
+                "Sintomas": sintomas_ocorrencia
+            }
+
+            ocorrencias_medicas.append(nova_ocorrencia)
+            print("Ocorrência médica adicionada com sucesso.")
+        elif escolha == "2":
+            print("Saindo do menu de alteração de ocorrências médicas.")
+            break
+        else:
+            print("Opção inválida. Tente novamente.")
 
 
+def adicionar_informacoes(user_data):
+    while True:
+        print("\nAdicionar Informações:")
+        print("1. Adicionar informações da pulseira")
+        print("2. Adicionar condições médicas")
+        print("3. Adicionar ocorrências médicas")
+        print("4. Voltar ao menu anterior")
+
+        escolha = input("Escolha a opção desejada: ")
+
+        if escolha == "1":
+            adicionar_info_pulseira(user_data)
+        elif escolha == "2":
+            adicionar_condicoes_medicas(user_data)
+        elif escolha == "3":
+            adicionar_ocorrencias_medicas(user_data)
+        elif escolha == "4":
+            print("Voltando ao menu anterior.")
+            break
+        else:
+            print("Opção inválida. Tente novamente.")
+
+
+def adicionar_info_pulseira(user_data):
+    pulseira_data = user_data["user1"]["pulseira1"]
+
+    print("\nAdicionar Informações da Pulseira:")
+    nome_user = input("Novo nome do usuário: ")
+    nasc_user = input("Nova data de nascimento (ddmmaaaa): ")
+    tp_user = input("Novo tipo sanguíneo: ")
+
+    medicamentos = cadastrar_medicamento()
+
+    resposta_alergia = input("\nDeseja adicionar alguma informação adicional no cadastro de alergia? (s/n)\n").lower()
+
+    if resposta_alergia == 's':
+        alergia = input("Nova alergia: ")
+        especificacao = input("Adicione novas especificações: ")
+    else:
+        alergia = especificacao = None
+
+    vacinas = cadastrar_vacinas()
+
+    condicoes_medicas = input("Informe a nova condição médica/de vulnerabilidade que o usuário se encontra: ")
+
+    resposta_ocorrencia = input("\nDeseja adicionar alguma ocorrência média posterior relevante? (s/n)\n").lower()
+
+    if resposta_ocorrencia == 's':
+        data_ocorrencia = input("Nova data da ocorrência (ddmmaaaa): ")
+        while not validar_data_ocorrencia(data_ocorrencia):
+            print("Formato inválido, tente novamente.")
+            data_ocorrencia = input("Nova data da ocorrência (ddmmaaaa): ")
+
+        local_ocorrencia = input("Novo local da ocorrência (hospital, clínica, etc.): ")
+        relato_ocorrencia = input("Novo relato da ocorrência: ")
+        sintomas_ocorrencia = input("Novos sintomas que levaram à ocorrência: ")
+
+        medicamentos_ocorrencia = cadastrar_medicamento()
+    else:
+        data_ocorrencia = local_ocorrencia = relato_ocorrencia = sintomas_ocorrencia = medicamentos_ocorrencia = None
+
+    # Atualiza os dados da pulseira
+    pulseira_data["dados"]["nome"] = nome_user
+    pulseira_data["dados"]["nascimento"] = nasc_user
+    pulseira_data["dados"]["tipo_sanguineo"] = tp_user
+    pulseira_data["dados"]["medicamentos"] = medicamentos
+    pulseira_data["dados"]["alergias"]["Alergia:"] = alergia
+    pulseira_data["dados"]["alergias"]["Especificacao"] = especificacao
+    pulseira_data["dados"]["vacinas"] = vacinas
+    pulseira_data["condicoes_medicas"] = condicoes_medicas
+    pulseira_data["ocorrencias_medicas"]["Data"] = data_ocorrencia
+    pulseira_data["ocorrencias_medicas"]["Local"] = local_ocorrencia
+    pulseira_data["ocorrencias_medicas"]["Relato"] = relato_ocorrencia
+    pulseira_data["ocorrencias_medicas"]["Sintomas"] = sintomas_ocorrencia
+    pulseira_data["ocorrencias_medicas"]["Medicamentos"] = medicamentos_ocorrencia
+
+    salvar_dados_json(user_data)
+    print("Informações da pulseira atualizadas com sucesso.")
+
+
+def adicionar_condicoes_medicas(user_data):
+    pulseira_data = user_data["user1"]["pulseira1"]
+
+    print("\nAdicionar Condições Médicas:")
+    novas_condicoes_medicas = input("Informe as novas condições médicas/de vulnerabilidade que o usuário se encontra: ")
+
+    # Atualiza as condições médicas da pulseira
+    pulseira_data["condicoes_medicas"] = novas_condicoes_medicas
+
+    salvar_dados_json(user_data)
+    print("Condições médicas atualizadas com sucesso.")
+
+
+def adicionar_ocorrencias_medicas(user_data):
+    pulseira_data = user_data["user1"]["pulseira1"]
+
+    print("\nAdicionar Ocorrências Médicas:")
+    resposta_ocorrencia = input("\nDeseja adicionar alguma ocorrência médica posterior relevante? (s/n)\n").lower()
+
+    if resposta_ocorrencia == 's':
+        data_ocorrencia = input("Data da ocorrência (ddmmaaaa): ")
+        while not validar_data_ocorrencia(data_ocorrencia):
+            print("Formato inválido, tente novamente.")
+            data_ocorrencia = input("Data da ocorrência (ddmmaaaa): ")
+
+        local_ocorrencia = input("Local da ocorrência (hospital, clínica, etc.): ")
+        relato_ocorrencia = input("Relato da ocorrência: ")
+        sintomas_ocorrencia = input("Sintomas que levaram à ocorrência: ")
+
+        medicamentos_ocorrencia = cadastrar_medicamento()
+
+        # Atualiza as ocorrências médicas da pulseira
+        pulseira_data["ocorrencias_medicas"] = {
+            "Data": data_ocorrencia,
+            "Local": local_ocorrencia,
+            "Relato": relato_ocorrencia,
+            "Sintomas": sintomas_ocorrencia,
+            "Medicamentos": medicamentos_ocorrencia
+        }
+
+        salvar_dados_json(user_data)
+        print("Ocorrências médicas atualizadas com sucesso.")
+    else:
+        print("Nenhuma ocorrência médica adicionada.")
 
     
     
