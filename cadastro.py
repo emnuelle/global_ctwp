@@ -19,7 +19,7 @@ def gerar_id_pulseira():
     return id_pulseira
 
 def salvar_dados_json(dados):
-    with open('usuarios.json', 'w') as file:
+    with open('usuarios.json', 'w', encoding='utf8') as file:
         json.dump(dados, file, indent=4)
 
 def cadastrar_medicamento():
@@ -51,6 +51,8 @@ def cadastrar_medicamento():
 def cadastrar_vacinas():
     vacinas = []
     while True:
+        print("\nCadastro de Vacinas\n")
+
         nome_vacina = input("Nome da vacina: ")
         data_vacina = input("Dia da aplicação: ")
         descricao_vacina = input("Descrição da vacina aplicada: ")
@@ -78,6 +80,7 @@ def cadastrar_usuario():
     id_pulseira = gerar_id_pulseira()
 
     print("\nCadastro\n")
+    print(f"\nSeu número de usuário é {contador_usuarios}, guarde ele com carinho.\n")
     print("\nAdicione as informações do Tutor responsável\n")
 
     email_tutor = input("Email: ")

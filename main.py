@@ -1,7 +1,7 @@
 from cadastro import cadastrar_usuario
 from utils import carregar_usuarios, salvar_usuarios
 from login import login
-from consulta import consultar_pulseira
+from consulta import consulta
 
 while True:
     print("\nHealth Tag")
@@ -22,8 +22,7 @@ while True:
         salvar_usuarios(usuarios)
         print("Cadastro concluído. Retornando ao menu inicial.")
     elif escolha == "3":
-        consultar_pulseira(usuarios)
-        salvar_usuarios(usuarios)
+        consulta()
     elif escolha == "4":
         print("Saindo do sistema. Até logo!")
         salvar_usuarios(usuarios)

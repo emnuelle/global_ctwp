@@ -1,0 +1,53 @@
+{
+  "user1" : {
+    "login" : {
+      "email_tutor" : "rm97973@fiap.com.br" ,
+      "senha" : "@97973"
+    } ,
+    "dados_tutor" : {
+      "nome_tutor" : "Emanuelle Maria Soares Pereira" ,
+      "telefone_tutor" : "11942693019" ,
+      "endereco_tutor" : {
+        "rua_tutor" : "Lero lero " ,
+        "numero_tutor" : "123" ,
+        "cep_tutor" : "08020330" ,
+        "bairro_tutor" : "lero lero " ,
+        "cidade_tutor" : "lero " ,
+        "estado_tutor" : "LR"
+      } ,
+      "informacoes_adicionais_tutor" : {
+        "Titulo" : "Alunas da Fiap " ,
+        "Descricao" : "EMANUELLE SOARES - 97973 e VICTORIA FRANCESCHINI - 550609"
+      }
+    } ,
+    "pulseira1" : {
+      "codigo" : "97973" ,
+      "dados" : {
+        "nome" : "Miolino" ,
+        "nascimento" : "19102022" ,
+        "tipo_sanguineo" : "o-" ,
+        "medicamentos" : null ,
+        "alergias" : {
+          "Alergia:" : "Água " ,
+          "Especificacao" : "Gatos odeiam agua "
+        } ,
+        "vacinas" : [
+          {
+            "nome" : "lerolero " ,
+            "data" : "20052023" ,
+            "descricao" : "lero lero lero lero miolinho esta devidamente protegido " ,
+            "local" : "Posto de saúde lero "
+          }
+        ]
+      } ,
+      "condicoes_medicas" : "Gato Larajnja " ,
+      "ocorrencias_medicas" : {
+        "Data" : null ,
+        "Local" : null ,
+        "Relato" : null ,
+        "Sintomas" : null ,
+        "Medicamentos" : null
+      }
+    }
+  }
+}

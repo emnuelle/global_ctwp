@@ -50,7 +50,7 @@ def gerar_codigo_pulseira():
 # Carregando os usuários no arquivo json, 
 def carregar_usuarios():
     try:
-        with open("usuarios.json", "r") as file:
+        with open("usuarios.json", "r", encoding='utf8') as file:
             data = file.read()
             if data:
                 return json.loads(data)
@@ -63,7 +63,7 @@ def carregar_usuarios():
 
 
 def salvar_usuarios_no_arquivo(usuarios):
-    with open("usuarios.json", "w") as file:
+    with open("usuarios.json", "w", encoding='utf8') as file:
         json.dump(usuarios, file)
 
 
