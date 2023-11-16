@@ -11,13 +11,13 @@ def login(usuarios):
 
         # Verifica se o email e a senha correspondem a algum usuário cadastrado
         usuario_encontrado = None
-        for pulseira in usuarios:
-            if pulseira['usuario']['email_tutor'] == email and pulseira['usuario']['senha'] == senha:
-                usuario_encontrado = pulseira['usuario']
+        for usuario_id, usuario_data in usuarios.items():
+            if usuario_data['login']['email_tutor'] == email and usuario_data['login']['senha'] == senha:
+                usuario_encontrado = usuario_data
                 break
 
         if usuario_encontrado:
-            print(f"\nLogin bem-sucedido! Bem-vindo(a), {usuario_encontrado['nome_tutor']}!")
+            print(f"\nLogin bem-sucedido! Bem-vindo(a), {usuario_encontrado['dados_tutor']['nome_tutor']}!")
             # Aqui você pode adicionar as ações que deseja após o login, por exemplo, exibir um menu específico.
             break
         else:
@@ -28,5 +28,4 @@ def login(usuarios):
                 print("\nNúmero máximo de tentativas excedido. Redirecionando para o menu inicial.")
                 break
 
-            print(f"Você tem mais {3 - tentativas} tentativas restantes. Assim que forem ultrapassadas os sistema irá retornar ao menu inicial.")
-            
+            print(f"Você tem mais {3 - tentativas} tentativas restantes. Assim que forem ultrapassadas o sistema irá retornar ao menu inicial.")

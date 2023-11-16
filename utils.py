@@ -1,5 +1,6 @@
 import re
 import random
+import json
 
 def validar_data_nascimento(data):
     # Regex para o formato ddmmaaaa
@@ -30,6 +31,42 @@ def validar_cep(cep):
     padrao = re.compile(r'^\d{5}\d{3}$')
     return bool(padrao.match(cep))
 
+# Função para validar e obter uma senha do usuário
+def senha():
+    while True:
+        senha = input("Digite uma senha (com pelo menos um número e um caractere especial): ")
+        confirmacao_senha = input("Digite novamente a senha para confirmar: ")
+
+        if senha == confirmacao_senha and any(c.isdigit() for c in senha) and any(c in "!@#$%^&*()-_+=<>,.?/:;|[]{}`~" for c in senha):
+            return senha
+        else:
+            print("Senha inválida. Certifique-se de que ela contenha pelo menos um número e um caractere especial, e que as duas inserções sejam iguais.")
+
+
 
 def gerar_codigo_pulseira():
     return ''.join(random.choice('0123456789ABCDEF') for _ in range(6))
+
+# Carregando os usuários no arquivo json, 
+def carregar_usuarios():
+    try:
+        with open("usuarios.json", "r") as file:
+            data = file.read()
+            if data:
+                return json.loads(data)
+            else:
+                return []
+    except FileNotFoundError:
+        return []
+    except json.decoder.JSONDecodeError:
+        return []
+
+
+def salvar_usuarios_no_arquivo(usuarios):
+    with open("usuarios.json", "w") as file:
+        json.dump(usuarios, file)
+
+
+def salvar_usuarios(usuarios):
+    salvar_usuarios_no_arquivo(usuarios)
+    

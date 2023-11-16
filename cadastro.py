@@ -1,440 +1,221 @@
-import json
-from utils import validar_data_nascimento, validar_tipo_sanguineo, gerar_codigo_pulseira, validar_email, validar_cep, validar_data_ocorrencia
+from utils import (
+    validar_data_nascimento,
+    validar_tipo_sanguineo,
+    validar_email,
+    validar_cep,
+    validar_data_ocorrencia,
+    senha
+)
 from termo import aceitar_termos_privacidade
-from login import login
-from consulta import consultar_pulseira
+import json
 
-usuarios = [] 
-senha = None
+contador_pulseiras = 1
+contador_usuarios = 1
 
+def gerar_id_pulseira():
+    global contador_pulseiras
+    id_pulseira = contador_pulseiras
+    contador_pulseiras += 1
+    return id_pulseira
 
-# Função do menu inicial
-def menu_inicial():
-    global usuarios, senha
+def salvar_dados_json(dados):
+    with open('usuarios.json', 'w') as file:
+        json.dump(dados, file, indent=4)
 
-    while True:
-        print("\nHealth Tag")
-        print("\nDigite uma opção:")
-        print("(1) Login")
-        print("(2) Cadastrar-se como Tutor")
-        print("(3) Consultar")
-        print("(4) Sair")
+def cadastrar_medicamento():
+    resposta_medicamento = input("\nO usuário consome algum(ns) medicamento(s) regularmente? (s/n)\n").lower()
 
-        escolha = input("\nEscolha uma opção: ")
-
-        usuarios = carregar_usuarios()
-
-        if escolha == "1":
-            login(usuarios)
-        elif escolha == "2":
-            usuarios = cadastrar_tutor(usuarios)
-        elif escolha == "3":
-            consultar_pulseira(usuarios)
-        elif escolha == "4":
-            print("Saindo do sistema. Até logo!")
-            salvar_usuarios(usuarios)
-            break
-        else:
-            print("Por favor, escolha uma opção válida...")
-
-
-# Carregando os usuários no arquivo json, 
-def carregar_usuarios():
-    try:
-        with open("usuarios.json", "r") as file:
-            data = file.read()
-            if data:
-                return json.loads(data)
-            else:
-                return []
-    except FileNotFoundError:
-        return []
-    except json.decoder.JSONDecodeError:
-        return []
-
-
-def salvar_usuarios_no_arquivo(usuarios):
-    with open("usuarios.json", "w") as file:
-        json.dump(usuarios, file)
-
-
-def salvar_usuarios(usuarios):
-    salvar_usuarios_no_arquivo(usuarios)
-
-
-# Cadastrando as vacinas
-def cadastrar_vacinas():
-    vacinas_recentes = []
-
-    print("\nCadastro de Vacinas: Informe ao menos as duas últimas aplicações.\n")
-
-    while True:
-        # Solicitação do nome da vacina
-        nome_vacina = input("Digite o nome da vacina: ")
-
-        # Solicitação da data da vacina
+    if resposta_medicamento == 's':
+        medicamentos = []
         while True:
-            data_vacina = input("Digite a data da vacina (ddmmaaaa): ")
-            if validar_data_nascimento(data_vacina):
+            nome_medicamento = input("Nome do(s) medicamento(s): ")
+            tipo_medicamento = input("Tipo do(s) medicamento(s): ")
+            quantidade_medicamento = input("Quantidade do(s) medicamento(s): ")
+            tempo_medicamento = input("Tempo de uso do medicamento(s): ")
+
+            medicamentos.append({
+                "Nome": nome_medicamento,
+                "Tipo": tipo_medicamento,
+                "Quantidade": quantidade_medicamento,
+                "Tempo": tempo_medicamento
+            })
+
+            resposta_mais_medicamentos = input("\nDeseja adicionar mais medicamentos? (s/n)\n").lower()
+            if resposta_mais_medicamentos != 's':
                 break
-            else:
-                print("Formato de data inválido. Digite novamente.")
+    else:
+        medicamentos = None
 
-        # Solicitação da descrição da vacina
-        descricao_vacina = input("Digite uma descrição da vacina: ")
+    return medicamentos
 
-        # Solicitação do local da vacinação
-        local_vacinacao = input("Digite o local da vacinação: ")
+def cadastrar_vacinas():
+    vacinas = []
+    while True:
+        nome_vacina = input("Nome da vacina: ")
+        data_vacina = input("Dia da aplicação: ")
+        descricao_vacina = input("Descrição da vacina aplicada: ")
+        local_vacinacao = input("Local de aplicação: ")
 
-        vacina = {
+        vacinas.append({
             "nome": nome_vacina,
             "data": data_vacina,
             "descricao": descricao_vacina,
             "local": local_vacinacao
-        }
+        })
 
-        vacinas_recentes.append(vacina)
-
-        print(f"Vacina '{nome_vacina}' cadastrada com sucesso!")
-
-        resposta = input("Deseja cadastrar outra vacina? (s/n) ")
-
-        if resposta.lower() == "n":
-            break
-        elif resposta.lower() != "s":
-            print("Por favor, digite uma opção válida...\n")
-            break  # Sai do loop se a resposta não for 's' nem 'n'
-
-    # Verifica se foram cadastradas pelo menos duas vacinas
-    if len(vacinas_recentes) < 2:
-        print("Aviso: Foi cadastrada apenas uma vacina. Lembre-se de cadastrar ao menos duas para completar o registro.")
-
-    print("Vacinas cadastradas com sucesso!")
-
-        
-# Cadastrando medicamentos 
-def cadastrar_medicamentos():
-    medicamentos = []
-
-    while True:
-        print("Digite o nome do medicamento (ou 'n' para encerrar): ")
-        nome_medicamento = input()
-
-        if nome_medicamento.lower() == 'n':
+        resposta_mais_vacinas = input("\nDeseja cadastrar mais vacinas? (s/n)\n").lower()
+        if resposta_mais_vacinas != 's':
             break
 
-        tipo_medicamento = input("Digite o tipo do medicamento: ")
-        quantidade_medicamento = input("Digite a quantidade do medicamento: ")
-        tempo_medicamento = input("Digite o tempo de consumo do medicamento: ")
+    return vacinas
 
-        medicamento = {
-            "Nome": nome_medicamento,
-            "Tipo": tipo_medicamento,
-            "Quantidade": quantidade_medicamento,
-            "Tempo": tempo_medicamento
-        }
+def cadastrar_usuario():
+    global contador_usuarios
 
-        medicamentos.append(medicamento)
-
-    return medicamentos
-
-
-# Cadastrando tutores 
-def cadastrar_tutor(usuarios):
     if not aceitar_termos_privacidade():
-        return
+        return None
 
-    dados_tutor = obter_dados_tutor()
-    senha = obter_senha_valida()
+    id_pulseira = gerar_id_pulseira()
 
-    pulseiras = cadastrar_pulseira(**dados_tutor, senha_tutor=senha)
-    usuario = {**dados_tutor, "senha": senha, "pulseiras": pulseiras}
+    print("\nCadastro\n")
+    print("\nAdicione as informações do Tutor responsável\n")
 
-    # Adiciona as informações do tutor e da pulseira à lista de usuários
-    usuarios.append(usuario)
+    email_tutor = input("Email: ")
+    while not validar_email(email_tutor):
+        print("Email inválido. Adicione email válido.")
+        email_tutor = input("Email:")
 
-    # Salva os usuários no arquivo JSON
-    salvar_usuarios(usuarios)
+    senha_tutor = senha()
 
-    print("\nCadastro realizado com sucesso! Redirecionando para o menu inicial...\n")
-    menu_inicial()
-
-
-# Obtendo dados dos tutores
-def obter_dados_tutor():
-    nome_tutor = input("Digite o seu nome completo: ")
+    nome_tutor = input("Nome completo: ")
     
-    # Solicitação do e-mail do tutor com validação
-    while True:
-        email_tutor = input("Digite o seu e-mail: ")
-        if validar_email(email_tutor):
-            break
-        else:
-            print("Formato de e-mail inválido. Digite novamente.")
-
-    telefone_tutor = input("Digite o seu telefone: ")
-    rua_tutor = input("Digite o nome da sua rua: ")
-    numero_tutor = input("Digite o número da sua residência: ")
+    telefone_tutor = input("Telefone: ")
     
-    # Solicitação do CEP do tutor com validação
-    while True:
-        cep_tutor = input("Digite o seu CEP: (formato: 00000000): ")
-        if validar_cep(cep_tutor):
-            break
-        else:
-            print("Formato de CEP inválido. Digite novamente.")
+    print("\nInformações de endereço\n")
+    
+    rua_tutor = input("Rua: ")
+    
+    numero_tutor = input("Número: ")
+    
+    cep_tutor = input("CEP: (formato xxxxxxxx) ")
+    
+    while not validar_cep(cep_tutor):
+        print("Formato de CEP inválido. Digite novamente.")
+        cep_tutor = input("CEP: (formato xxxxxxxx) ")
 
-    bairro_tutor = input("Digite o nome do seu bairro: ")
-    cidade_tutor = input("Digite o nome da sua cidade: ")
-    estado_tutor = input("Digite o nome do seu estado: ")
-    informacoes_adicionais_tutor = input("Digite informações adicionais (opcional): ")
+    bairro_tutor = input("Bairro: ")
+    
+    cidade_tutor = input("Cidade: ")
+    
+    estado_tutor = input("Estado: ")
 
-    return {
-        "nome_tutor": nome_tutor,
-        "email_tutor": email_tutor,
-        "telefone_tutor": telefone_tutor,
-        "rua_tutor": rua_tutor,
-        "numero_tutor": numero_tutor,
-        "cep_tutor": cep_tutor,
-        "bairro_tutor": bairro_tutor,
-        "cidade_tutor": cidade_tutor,
-        "estado_tutor": estado_tutor,
-        "informacoes_adicionais_tutor": informacoes_adicionais_tutor
-    }
+    resposta_infoad = input("\nDeseja adicionar alguma informação adicional no cadastro? (s/n)\n").lower()
 
-# Função para validar e obter uma senha do usuário
-def obter_senha_valida():
-    while True:
-        senha = input("Digite uma senha (com pelo menos um número e um caractere especial): ")
-        confirmacao_senha = input("Digite novamente a senha para confirmar: ")
+    if resposta_infoad == 's':
+        titulo_info_adicional_tutor = input("Título da informação adicional: ")
+        descricao_info_adicional_tutor = input("Descrição: ")
+    else:
+        titulo_info_adicional_tutor = descricao_info_adicional_tutor = None
+    
+    print("\nCadastro da pulseira\n")
 
-        if senha == confirmacao_senha and any(c.isdigit() for c in senha) and any(c in "!@#$%^&*()-_+=<>,.?/:;|[]{}`~" for c in senha):
-            return senha
-        else:
-            print("Senha inválida. Certifique-se de que ela contenha pelo menos um número e um caractere especial, e que as duas inserções sejam iguais.")
+    codigo_pulseira = input("Código presente na pulseira: ")
+    
+    print("\nInformações sobre o usuário da pulseira\n")
 
+    nome_user = input("Nome completo: ")
 
-# Função para cadastrar a pulseira
-def cadastrar_pulseira(nome_tutor, email_tutor, telefone_tutor, rua_tutor, numero_tutor, cep_tutor, bairro_tutor, cidade_tutor, estado_tutor, informacoes_adicionais_tutor, senha_tutor):
-    pulseiras = []
-    primeira_pulseira = True
+    nasc_user = input("Data de nascimento (ddmmaaaa): ")
+    while not validar_data_nascimento(nasc_user):
+        print("Formato inválido. Digite novamente.")
+        nasc_user = input("Data de nascimento (ddmmaaaa): ")
 
-    while True:
-        # Solicitação do código da pulseira
-        if primeira_pulseira:
-            print("Informe o código da pulseira (8 caracteres alfanuméricos): ")
-        else:
-            print("Deseja cadastrar outra pulseira? Informe o código da nova pulseira (8 caracteres alfanuméricos) ou 'n' para encerrar: ")
+    tp_user = input("Tipo sanguíneo: ")
+    while not validar_tipo_sanguineo(tp_user):
+        print("Resposta inválida. Digite novamente.")
+        tp_user = input("Tipo sanguíneo: ")
 
-        codigo_pulseira = input().upper()
+    medicamentos = cadastrar_medicamento()
 
-        if codigo_pulseira == 'N':
-            break
+    resposta_alergia = input("\nDeseja adicionar alguma informação adicional no cadastro de alergia? (s/n)\n").lower()
 
-        # Verifica se o código da pulseira já existe no cadastro
-        if any(p['codigo'] == codigo_pulseira for p in pulseiras):
-            print("Código da pulseira já cadastrado. Por favor, informe um novo código (8 caracteres alfanuméricos) ou 'n' para encerrar.")
-            continue
+    if resposta_alergia == 's':
+        alergia = input("Alergia: ")
+        especificacao = input("Adicione especificações: ")
+    else:
+        alergia = especificacao = None
+    
+    vacinas = cadastrar_vacinas()
 
-        pulseira = cadastrar_pessoa(nome_tutor, email_tutor, telefone_tutor, rua_tutor, numero_tutor, cep_tutor, bairro_tutor, cidade_tutor, estado_tutor, informacoes_adicionais_tutor, senha_tutor, codigo_pulseira)
+    condicoes_medicas = input("Informe a condição médica/de vulnerabilidade que o usuário se encontra: ")
 
-        pulseiras.append(pulseira)
-        print(f"Pulseira cadastrada com sucesso! Código: {pulseira['codigo']}")
+    resposta_ocorrencia = input("\nDeseja adicionar alguma ocorrência média posterior relevante? (s/n)\n").lower()
 
-        primeira_pulseira = False
-
-    return pulseiras
-
-
-# Função para cadastrar uma pessoa individualmente
-def cadastrar_pessoa(nome_tutor, email_tutor, telefone_tutor, rua_tutor, numero_tutor, cep_tutor,
-                      bairro_tutor, cidade_tutor, estado_tutor, informacoes_adicionais_tutor, senha_tutor, codigo_pulseira):
-
-    print(f"\nCadastrando pulseira com o id: {codigo_pulseira}")
-
-    print("Cadastro do Usuário\n")
-    print("Lembre-se que o usuário é quem vai carregar a pulseira.")
-    print()
-
-    print("Nome Completo: ")
-    nome_user = input()
-
-    # Validação da Data de Nascimento
-    while True:
-        print("Data de Nascimento (ddmmaaaa): ")
-        nasc_user = input()
-
-        if validar_data_nascimento(nasc_user):
-            break
-        else:
-            print("Formato de data inválido. Digite novamente.")
-
-    # Validação do Tipo Sanguíneo
-    while True:
-        print("Insira o tipo sanguíneo (A, B, AB, O, com ou sem sinal): ")
-        tp_user = input()
-
-        if validar_tipo_sanguineo(tp_user):
-            break
-        else:
-            print("Tipo sanguíneo inválido. Digite novamente.")
-
-    # Armazenando as condições médicas do usuário
-    condicoes_medicas = []
-    while True:
-        print("Digite a primeira condição médica/de vulnerabilidade do usuário: ")
-        condicao = input()
-
-        if condicao:
-            condicoes_medicas.append(condicao)
-            break
-        else:
-            print("É necessário inserir pelo menos uma condição médica.")
-
-    while True:
-        print("Deseja adicionar mais uma condição médica/de vulnerabilidade? (s/n): ")
-        opcao = input().lower()
-
-        if opcao == "s":
-            print("Digite a próxima condição médica/de vulnerabilidade: ")
-            condicao = input()
-            condicoes_medicas.append(condicao)
-        elif opcao == "n":
-            break
-        else:
-            print("Opção inválida. Por favor, escolha 's' para sim ou 'n' para não.")
-
-    # Verifica se a pessoa toma algum medicamento
-    print("A pessoa toma algum medicamento? (s/n): ")
-    resposta_medicamento = input().lower()
-
-    medicamentos_pulseira = []
-    if resposta_medicamento == "s":
-        medicamentos_pulseira = cadastrar_medicamentos()
-
-    # Armazenando as ocorrências médicas do usuário
-    ocorrencias_medicas = []
-    while True:
-        print("Ocorrências médicas\nDigite os detalhes da última ocorrência médica:")
-
-        while True:
+    if resposta_ocorrencia == 's':
+        data_ocorrencia = input("Data da ocorrência (ddmmaaaa): ")
+        while not validar_data_ocorrencia(data_ocorrencia):
+            print("Formato inválido, tente novamente.")
             data_ocorrencia = input("Data da ocorrência (ddmmaaaa): ")
-            if validar_data_ocorrencia(data_ocorrencia):
-                break
-            else:
-                print("Formato de data inválido. Digite novamente.")
-
+            
         local_ocorrencia = input("Local da ocorrência (hospital, clínica, etc.): ")
-
         relato_ocorrencia = input("Relato da ocorrência: ")
-
-        medicamentos_ocorrencia = []
-        while True:
-            print("Deseja adicionar um medicamento prescrito? (s/n): ")
-            opcao_medicamento = input().lower()
-
-            if opcao_medicamento == "s":
-                medicamento_nome = input("Nome do medicamento: ")
-                medicamento_tipo = input("Tipo do medicamento: ")
-                medicamento_quantidade = input("Quantidade prescrita: ")
-                medicamento_tempo = input("Tempo de consumo: ")
-
-                medicamento = {
-                    "Nome": medicamento_nome,
-                    "Tipo": medicamento_tipo,
-                    "Quantidade": medicamento_quantidade,
-                    "Tempo": medicamento_tempo
-                }
-
-                medicamentos_ocorrencia.append(medicamento)
-            elif opcao_medicamento == "n":
-                break
-            else:
-                print("Opção inválida. Por favor, escolha 's' para sim ou 'n' para não.")
-
         sintomas_ocorrencia = input("Sintomas que levaram à ocorrência: ")
 
-        ocorrencia = {
-            "Data": data_ocorrencia,
-            "Local": local_ocorrencia,
-            "Relato": relato_ocorrencia,
-            "Medicamentos": medicamentos_ocorrencia,
-            "Sintomas": sintomas_ocorrencia
-        }
-
-        ocorrencias_medicas.append(ocorrencia)
-
-        print("\nOcorrência médica registrada com sucesso!")
-
-        print("Deseja adicionar mais uma ocorrência médica? (s/n): ")
-        opcao_ocorrencia = input().lower()
-
-        if opcao_ocorrencia != "s":
-            break
-
-    # Coletando alergias do usuário
-    alergias = []
-    print("Você possui alguma alergia? (s/n): ")
-    resposta_alergias = input().lower()
-
-    if resposta_alergias == "s":
-        while True:
-            print("Digite a alergia do usuário: ")
-            alergia = input()
-
-            if alergia:
-                especificacao = input("Especificações da alergia (se houver): ")
-                alergia_info = {"Alergia": alergia, "Especificacao": especificacao}
-                alergias.append(alergia_info)
-
-                print("Deseja adicionar mais uma alergia? (s/n): ")
-                opcao_alergia = input().lower()
-
-                if opcao_alergia != "s":
-                    break
-            else:
-                break
-
-    # Cadastrando as últimas vacinas
-    resultado_vacinas = cadastrar_vacinas()
-
-    if resultado_vacinas:
-        print(f"{resultado_vacinas['titulo']}\n{resultado_vacinas['descricao']}")
-        for vacina in resultado_vacinas['vacinas']:
-            print(vacina)
+        medicamentos_ocorrencia = cadastrar_medicamento()
     else:
-        print("Erro ao cadastrar vacinas.")
+        data_ocorrencia = local_ocorrencia = relato_ocorrencia = sintomas_ocorrencia = medicamentos_ocorrencia = None
 
-    # Copie as informações do tutor para o usuário
-    usuario = {
-        "nome_tutor": nome_tutor,
-        "email_tutor": email_tutor,
-        "telefone_tutor": telefone_tutor,
-        "rua_tutor": rua_tutor,
-        "numero_tutor": numero_tutor,
-        "cep_tutor": cep_tutor,
-        "bairro_tutor": bairro_tutor,
-        "cidade_tutor": cidade_tutor,
-        "estado_tutor": estado_tutor,
-        "informacoes_adicionais_tutor": informacoes_adicionais_tutor,
-        "senha": senha_tutor  # Adicione a senha do usuário
+    # Criar um dicionário com os dados do usuário
+    user_data = {
+        f"user{contador_usuarios}": {
+            "login": {
+                "email_tutor": email_tutor,
+                "senha": senha_tutor
+            },
+            "dados_tutor": {
+                "nome_tutor": nome_tutor,
+                "telefone_tutor": telefone_tutor,
+                "endereco_tutor": {
+                    "rua_tutor": rua_tutor,
+                    "numero_tutor": numero_tutor,
+                    "cep_tutor": cep_tutor,
+                    "bairro_tutor": bairro_tutor,
+                    "cidade_tutor": cidade_tutor,
+                    "estado_tutor": estado_tutor
+                },
+                "informacoes_adicionais_tutor": {
+                    "Titulo": titulo_info_adicional_tutor,
+                    "Descricao": descricao_info_adicional_tutor
+                }
+            },
+            f"pulseira{id_pulseira}": {
+                "codigo": codigo_pulseira,
+                "dados": {
+                    "nome": nome_user,
+                    "nascimento": nasc_user,
+                    "tipo_sanguineo": tp_user,
+                    "medicamentos": medicamentos,
+                    "alergias": {
+                        "Alergia:": alergia,
+                        "Especificacao": especificacao
+                    },
+                    "vacinas": vacinas
+                },
+                "condicoes_medicas": condicoes_medicas,
+                "ocorrencias_medicas": {
+                    "Data": data_ocorrencia,
+                    "Local": local_ocorrencia,
+                    "Relato": relato_ocorrencia,
+                    "Sintomas": sintomas_ocorrencia,
+                    "Medicamentos": medicamentos_ocorrencia
+                }
+            }
+        }
     }
 
-    pulseira = {
-        "codigo": codigo_pulseira,
-        "nome": nome_user,
-        "nascimento": nasc_user,
-        "tipo_sanguineo": tp_user,
-        "condicoes_medicas": condicoes_medicas,
-        "ocorrencias_medicas": ocorrencias_medicas,
-        "alergias": alergias,
-        "vacinas_recentes": resultado_vacinas,
-        "medicamentos": medicamentos_pulseira,  # Adiciona os medicamentos à pulseira
-        "usuario": usuario
-    }
+    contador_usuarios += 1
+    
+    salvar_dados_json(user_data)
+    print("Cadastro concluído.")
 
-    print("Cadastro realizado com sucesso! Redirecionando para o menu inicial...")
-
-    # Agora, chame a função menu_inicial para voltar ao menu inicial
-    menu_inicial()
-    return pulseira
+    return user_data
