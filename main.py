@@ -190,28 +190,6 @@ def login(usuarios):
         print("PIN ou senha incorretos. Tente novamente.")
         return None
 
-def menu_principal(usuarios):
-    while True:
-        print("\nMenu Principal")
-        print("1. Cadastrar novo usuário")
-        print("2. Login")
-        print("3. Sair")
-
-        escolha = input("Escolha uma opção: ")
-
-        if escolha == '1':
-            cadastrar_usuario(usuarios)
-        elif escolha == '2':
-            pin_logado = login(usuarios)
-            if pin_logado:
-                usuario_encontrado = usuarios[pin_logado]
-                menu_secundario(usuarios, usuario_encontrado)
-        elif escolha == '3':
-            print("Saindo do programa. Até mais!")
-            break
-        else:
-            print("Opção inválida. Tente novamente.")
-
 def menu_secundario(usuarios, usuario_encontrado):
     while True:
         print("\nMenu Secundário")
