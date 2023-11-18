@@ -1,6 +1,12 @@
 import re
 import random
 
+def gerar_coordenadas():
+    latitude = random.uniform(-90, 90)
+    longitude = random.uniform(-180, 180)
+    return latitude, longitude
+
+
 def validar_cd_pulseira(cpf):
     
     pattern = re.compile(r'^\d{3}\.\d{3}\.\d{3}-\d{2}$')

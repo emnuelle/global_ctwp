@@ -1,5 +1,5 @@
 import json
-from fonte import validar_data_nascimento, validar_tipo_sanguineo, validar_email, validar_cep, cad_senha, gerar_pin_aleatorio, validar_cd_pulseira
+from fonte import validar_data_nascimento, validar_tipo_sanguineo, validar_email, validar_cep, cad_senha, gerar_pin_aleatorio, validar_cd_pulseira, gerar_coordenadas
 
 def carregar_dados_json():
     try:
@@ -217,7 +217,8 @@ def menu_secundario(usuarios, usuario_encontrado):
         print("\nMenu Secundário")
         print("1. Adicionar informações")
         print("2. Alterar informações")
-        print("3. Sair")
+        print("3. Consultar Informações")
+        print("4. Sair")
 
         escolha = input("Escolha uma opção: ")
 
@@ -226,6 +227,8 @@ def menu_secundario(usuarios, usuario_encontrado):
         elif escolha == '2':
             exibir_menu_alteracao(usuarios, usuario_encontrado)
         elif escolha == '3':
+            consultar_por_pin(usuarios)
+        elif escolha == '4':
             break
         else:
             print("Opção inválida. Tente novamente.")
@@ -441,6 +444,10 @@ def exibir_informacoes(usuario):
     print(f"Nascimento: {usuario['pulseira']['dados']['nascimento']}")
     print(f"Tipo Sanguíneo: {usuario['pulseira']['dados']['tipo_sanguineo']}")
     print(f"Condições Médicas: {usuario['pulseira']['condicoes_medicas']}")
+    print("--------------------------")
+    print(" Localização do bracelete:")
+    coordenadas = gerar_coordenadas()
+    print("Coordenadas geradas:", coordenadas)
     print("--------------------------")
     print("Medicamentos consumidos regularmente:")
     print(f"Nome: {usuario['pulseira']['dados']['medicamentos']['Nome']}")
