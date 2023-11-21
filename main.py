@@ -1,4 +1,5 @@
 import json
+from termo import aceitar_termos_privacidade
 from fonte import validar_data_nascimento, validar_tipo_sanguineo, validar_email, validar_cep, cad_senha, gerar_pin_aleatorio, validar_cd_pulseira, gerar_coordenadas
 
 def carregar_dados_json():
@@ -471,6 +472,7 @@ def main():
         escolha = input("Escolha uma opção: ")
 
         if escolha == '1':
+            aceitar_termos_privacidade()
             cadastrar_usuario(usuarios)
         elif escolha == '2':
             pin_logado = login(usuarios)
