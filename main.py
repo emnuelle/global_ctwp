@@ -424,7 +424,7 @@ def exibir_informacoes(usuario):
     print(f"Tipo Sanguíneo: {usuario['pulseira']['dados']['tipo_sanguineo']}")
     print(f"Condições Médicas: {usuario['pulseira']['condicoes_medicas']}")
     print("--------------------------")
-    print(" Localização do bracelete:")
+    print("Localização do bracelete:")
     coordenadas = gerar_coordenadas()
     print("Coordenadas da localização do dispositivo:", coordenadas)
     print("--------------------------")
