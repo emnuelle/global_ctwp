@@ -1,47 +1,47 @@
 {
     "15251": {
-        "senha": "@123",
+        "senha": "",
         "data_tutor": {
-            "email_tutor": "123@123.com",
-            "telefone_tutor": "11942693019",
+            "email_tutor": "",
+            "telefone_tutor": "",
             "endereco_tutor": {
-                "rua_tutor": "Rua da esperan\u00e7a ",
-                "numero_tutor": "222",
-                "cep_tutor": "08020330",
-                "bairro_tutor": "Bairro da f\u00c9 ",
-                "cidade_tutor": "Compos da Sorte",
-                "estado_tutor": "SP"
+                "rua_tutor": "",
+                "numero_tutor": "",
+                "cep_tutor": "",
+                "bairro_tutor": "",
+                "cidade_tutor": "",
+                "estado_tutor": ""
             },
             "informacoes_adicionais_tutor": {
-                "Titulo": "Eu tenho f\u00e9 que esse programa vai funcionar!",
-                "Descricao": "Temos f\u00e9 que esse programa vai funcionar!!!!"
+                "Titulo": "",
+                "Descricao": ""
             }
         },
         "pulseira": {
             "dados": {
-                "codigo": "038.110.288-29",
-                "nome": "038.110.288-20",
-                "nascimento": "21092022",
-                "tipo_sanguineo": "o-",
+                "codigo": "",
+                "nome": "",
+                "nascimento": "",
+                "tipo_sanguineo": "",
                 "medicamentos": {
-                    "Nome": "1",
-                    "Tipo": "2",
-                    "Quantidade": "3",
-                    "Tempo": "4"
+                    "Nome": "",
+                    "Tipo": "",
+                    "Quantidade": "",
+                    "Tempo": ""
                 },
                 "alergias": {
-                    "Alergia": "1",
-                    "Especificacao": "2"
+                    "Alergia": "",
+                    "Especificacao": ""
                 },
                 "vacinas": {
-                    "nome": "3",
-                    "data": "4",
-                    "descricao": "5",
-                    "local": "6"
+                    "nome": "",
+                    "data": "",
+                    "descricao": "",
+                    "local": ""
                 }
             },
-            "condicoes_medicas": "Gato ",
-            "ocorrencias_medicas": "Nenhuma informa\u00e7\u00e3o registrada."
+            "condicoes_medicas": "",
+            "ocorrencias_medicas": ""
         }
     },
     "97973": {
@@ -54,7 +54,7 @@
                 "numero_tutor": "23",
                 "cep_tutor": "08020330",
                 "bairro_tutor": "Paz",
-                "cidade_tutor": "Pass\u00e1ros",
+                "cidade_tutor": "Passáros",
                 "estado_tutor": "SP"
             },
             "informacoes_adicionais_tutor": {
@@ -72,21 +72,21 @@
                     "Nome": "Ritalina",
                     "Tipo": "comprimido ",
                     "Quantidade": "1000000mg por dia ",
-                    "Tempo": "Pelo menos at\u00e9 o fim da gradua\u00e7\u00e3o"
+                    "Tempo": "Pelo menos até fim da graduação"
                 },
                 "alergias": {
-                    "Alergia": "Nenhuma informa\u00e7\u00e3o adicionada.",
-                    "Especificacao": "Nenhuma informa\u00e7\u00e3o adicionada."
+                    "Alergia": "Nenhuma informação adicionada.",
+                    "Especificacao": "Nenhuma informação adicionada."
                 },
                 "vacinas": {
-                    "nome": "Chat GPT ",
+                    "nome": "Vacina da cura",
                     "data": "20052023",
-                    "descricao": "Depois dessa vacina e esse programa cocluo que o gpt as vezes mais atraplha que ajuda, que bom que eu sou muito focada kk.",
-                    "local": "Em casa"
+                    "descricao": "Vacina da cura",
+                    "local": "Posta do saúde"
                 }
             },
             "condicoes_medicas": "Aluna da Fiap",
-            "ocorrencias_medicas": "Nenhuma informa\u00e7\u00e3o registrada."
+            "ocorrencias_medicas": "Nenhuma informação registrada."
         }
     }
 }
