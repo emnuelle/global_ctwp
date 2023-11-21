@@ -426,7 +426,7 @@ def exibir_informacoes(usuario):
     print("--------------------------")
     print(" Localização do bracelete:")
     coordenadas = gerar_coordenadas()
-    print("Coordenadas geradas:", coordenadas)
+    print("Coordenadas da localização do dispositivo:", coordenadas)
     print("--------------------------")
     print("Medicamentos consumidos regularmente:")
     print(f"Nome: {usuario['pulseira']['dados']['medicamentos']['Nome']}")
